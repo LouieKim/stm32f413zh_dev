@@ -42,6 +42,17 @@ void func_1s()
 
 		gpio_in();
 
+/*		if(aa == 0)
+		{
+			g_evon_gpio_out.bit.DOOR_02 = 1;
+			aa = 1;
+		}
+		else if(aa == 1)
+		{
+			g_evon_gpio_out.bit.DOOR_02 = 0;
+			aa = 0;
+		}*/
+
 	}
 }
 

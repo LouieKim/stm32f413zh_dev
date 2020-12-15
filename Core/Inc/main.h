@@ -53,11 +53,13 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+extern uint16_t adc_val[4];
 
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+
 
 /* USER CODE END EM */
 

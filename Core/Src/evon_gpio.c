@@ -6,8 +6,9 @@
  */
 
 #include "evon_gpio.h"
+#include "adc.h"
 
-#define DOOR_01_ON 			HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_SET)
+#define DOOR_01_ON	 		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_SET)
 #define DOOR_01_OFF 		HAL_GPIO_WritePin(GPIOF, GPIO_PIN_13, GPIO_PIN_RESET)
 #define DOOR_02_ON			HAL_GPIO_WritePin(GPIOF, GPIO_PIN_14, GPIO_PIN_SET)
 #define DOOR_02_OFF			HAL_GPIO_WritePin(GPIOF, GPIO_PIN_14, GPIO_PIN_RESET)
@@ -52,23 +53,26 @@
 #define FAULT_LED_OFF		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, GPIO_PIN_RESET)
 
 
-#define DOOR_01_STATUS		HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_3)
-#define DOOR_02_STATUS		HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_4)
-#define DSEN_01_STATUS		HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_1)
-#define DSEN_02_STATUS		HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_2)
-#define MC_01_STATUS		HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15)
-#define MC_02_STATUS		HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_0)
-#define RELAY_01_STATUS		HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2)
-#define RELAY_02_STATUS		HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3)
-#define RELAY_03_STATUS		HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_4)
-#define RELAY_04_STATUS		HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5)
-#define RELAY_05_STATUS		HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_6)
-#define RELAY_06_STATUS		HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)
+#define DOOR_01_IN			HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_3)
+#define DOOR_02_IN			HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_4)
+#define DSEN_01_IN			HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_1)
+#define DSEN_02_IN			HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_2)
+#define MC_01_IN			HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15)
+#define MC_02_IN			HAL_GPIO_ReadPin(GPIOF, GPIO_PIN_0)
+#define RELAY_01_IN			HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_2)
+#define RELAY_02_IN			HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_3)
+#define RELAY_03_IN			HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_4)
+#define RELAY_04_IN			HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_5)
+#define RELAY_05_IN			HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_6)
+#define RELAY_06_IN			HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)
 
-#define EMERGENCY_STATUS	HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)
+#define EMERGENCY_IN		HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)
+
+
 
 uGPO g_evon_gpio_out;
 uGPI g_evon_gpio_in;
+
 
 //포인터로 Parameter 받기
 uint8_t gpio_out()
@@ -104,24 +108,27 @@ uint8_t gpio_out()
 	return 1;
 }
 
+
 uint8_t gpio_in()
 {
-	g_evon_gpio_in.bit.DOOR_01 = DOOR_01_STATUS;
-	g_evon_gpio_in.bit.DOOR_02 = DOOR_02_STATUS;
-	g_evon_gpio_in.bit.DSEN_01 = DSEN_01_STATUS;
-	g_evon_gpio_in.bit.DSEN_02 = DSEN_02_STATUS;
-	g_evon_gpio_in.bit.MC_01 = MC_01_STATUS;
-	g_evon_gpio_in.bit.MC_02 = MC_02_STATUS;
-	g_evon_gpio_in.bit.RELAY_01 = RELAY_01_STATUS;
-	g_evon_gpio_in.bit.RELAY_02 = RELAY_02_STATUS;
-	g_evon_gpio_in.bit.RELAY_03 = RELAY_03_STATUS;
-	g_evon_gpio_in.bit.RELAY_04 = RELAY_04_STATUS;
-	g_evon_gpio_in.bit.RELAY_05 = RELAY_05_STATUS;
-	g_evon_gpio_in.bit.RELAY_06 = RELAY_06_STATUS;
-	g_evon_gpio_in.bit.EMERGENCY = EMERGENCY_STATUS;
+	g_evon_gpio_in.bit.DOOR_01 = DOOR_01_IN;
+	g_evon_gpio_in.bit.DOOR_02 = DOOR_02_IN;
+	g_evon_gpio_in.bit.DSEN_01 = DSEN_01_IN;
+	g_evon_gpio_in.bit.DSEN_02 = DSEN_02_IN;
+	g_evon_gpio_in.bit.MC_01 = MC_01_IN;
+	g_evon_gpio_in.bit.MC_02 = MC_02_IN;
+	g_evon_gpio_in.bit.RELAY_01 = RELAY_01_IN;
+	g_evon_gpio_in.bit.RELAY_02 = RELAY_02_IN;
+	g_evon_gpio_in.bit.RELAY_03 = RELAY_03_IN;
+	g_evon_gpio_in.bit.RELAY_04 = RELAY_04_IN;
+	g_evon_gpio_in.bit.RELAY_05 = RELAY_05_IN;
+	g_evon_gpio_in.bit.RELAY_06 = RELAY_06_IN;
+	g_evon_gpio_in.bit.EMERGENCY = EMERGENCY_IN;
 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET); //UART4 En_tx_mode
-	HAL_UART_Transmit(&huart1,  &g_evon_gpio_in.all, 4, 10);
+	//HAL_UART_Transmit(&huart1,  &g_evon_gpio_in.all, 4, 10);
+
+	HAL_UART_Transmit(&huart1, &adc_val[3], 2, 10);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET); //UART4 En_rx_mode*/
 
 	return 1;

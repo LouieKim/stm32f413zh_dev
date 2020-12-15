@@ -19,6 +19,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -63,6 +65,7 @@ static void MX_NVIC_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t timer_1ms = 0;
 uint8_t rx1_data = 0x00;
+uint16_t adc_val[4] = {'\0', };
 
 /* USER CODE END 0 */
 
@@ -94,8 +97,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_ADC1_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -113,6 +118,8 @@ int main(void)
 
   HAL_UART_Receive_IT(&huart1,  &rx1_data, 1);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET); //UART1 En_rx_mode
+
+  HAL_ADC_Start_DMA(&hadc1, adc_val, 4);
 
   while (1)
   {
