@@ -8,6 +8,7 @@
 #ifndef INC_EVON_LOOP_H_
 #define INC_EVON_LOOP_H_
 
+void func_10ms(void);
 void func_100ms(void);
 void func_500ms(void);
 void func_1s(void);

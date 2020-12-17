@@ -53,7 +53,8 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-extern uint16_t adc_val[4];
+extern uint16_t adc_val[7];
+void located_in_timer(void);
 
 /* USER CODE END EC */
 

@@ -10,6 +10,8 @@
 
 #include "main.h"
 #include "usart.h"
+#include "evon_slv_mbus.h"
+
 
 struct _EVON_GPIO_OUT
 {
@@ -70,5 +72,6 @@ extern uGPI g_evon_gpio_in;
 
 uint8_t gpio_out(void);
 uint8_t gpio_in(void);
+uint8_t adc_loop(void);
 
 #endif /* INC_EVON_GPIO_H_ */

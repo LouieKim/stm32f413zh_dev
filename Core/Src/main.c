@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "evon_loop.h"
 #include "evon_init.h"
+#include "evon_gpio.h"
 
 /* USER CODE END Includes */
 
@@ -65,7 +66,7 @@ static void MX_NVIC_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t timer_1ms = 0;
 uint8_t rx1_data = 0x00;
-uint16_t adc_val[4] = {'\0', };
+uint16_t adc_val[7] = {'\0', };
 
 /* USER CODE END 0 */
 
@@ -76,6 +77,7 @@ uint16_t adc_val[4] = {'\0', };
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
 
   /* USER CODE END 1 */
 
@@ -118,14 +120,16 @@ int main(void)
 
   HAL_UART_Receive_IT(&huart1,  &rx1_data, 1);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET); //UART1 En_rx_mode
+  HAL_ADC_Start_DMA(&hadc1, adc_val, 7);
 
-  HAL_ADC_Start_DMA(&hadc1, adc_val, 4);
+  startSimpleModbus(1, MDregister, MDcoil);
 
   while (1)
   {
 	  if (timer_1ms == 1)
 	  {
 		  timer_1ms = 0;
+		  func_10ms();
 		  func_100ms();
 		  func_500ms();
 		  func_1s();
@@ -200,11 +204,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		HAL_UART_Receive_IT(&huart1,  &rx1_data, 1);
 
-		evon_uart1_rx(rx1_data);
-
-		/*HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET); //UART4 En_tx_mode
-		HAL_UART_Transmit(&huart1,  &rx1_data, 1, 10);
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET); //UART4 En_rx_mode*/
+		push_ringbuffer(rx1_data);
 	}
   /* NOTE: This function should not be modified, when the callback is needed,
            the HAL_UART_RxCpltCallback could be implemented in the user file
